@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Записи в оперативном журнале
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <br>
+  <div class="row">
+    
+    <div class="col-3" style="background: green;">Время</div>
+    <div class="col-9" style="background: yellow;">Что случилось, что случилось?!</div>
+    <hr>
+  </div> 
+  {% for record in page_obj %}
+  <div class="row">
+    <div class="col-3" style="background: green;"> 
+        Вахта № {{ record.watch }}
+        Время {{ record.duty_time }}
+        {{ record.pub_date|time:"H:i"}} 
+      </div>
+      <div class="col-9" style="background: yellow;">
+        Автор: {{ record.author.get_full_name }} {{ record.text|linebreaksbr }}
+      </div>
+    </div> 
+    {% if not forloop.last %}
+        <hr>
+    {% endif %}
+    {% endfor %}
+    {% include 'includes/paginator.html' %}
+</div>
+{% endblock %}
