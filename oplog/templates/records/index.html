@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 Записи в оперативном журнале
@@ -6,28 +7,59 @@
 
 {% block content %}
 <div class="container py-5">
-  <br>
-  <div class="row">
-    
-    <div class="col-3" style="background: green;">Время</div>
-    <div class="col-9" style="background: yellow;">Что случилось, что случилось?!</div>
-    <hr>
-  </div> 
-  {% for record in page_obj %}
-  <div class="row">
-    <div class="col-3" style="background: green;"> 
-        Вахта № {{ record.watch }}
-        Время {{ record.duty_time }}
-        {{ record.pub_date|time:"H:i"}} 
-      </div>
-      <div class="col-9" style="background: yellow;">
-        Автор: {{ record.author.get_full_name }} {{ record.text|linebreaksbr }}
-      </div>
-    </div> 
-    {% if not forloop.last %}
-        <hr>
-    {% endif %}
-    {% endfor %}
-    {% include 'includes/paginator.html' %}
+  <div class="card my-4">
+    <div class="card-header text-center">
+      Оперативный журнал
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+
+        <div class="row">
+          <div class="col-2">
+            Дата
+          </div>
+          <div class="col-2">
+            Смена
+          </div>
+          <div class="col-2">
+            Вахта
+          </div>
+          <div class="col-5">
+            Пользователь
+          </div>
+          <div class="col-1"> </div>
+          {% comment %} <div class="w-100"></div> {% endcomment %}
+      </li>
+
+        {% for record in page_obj %}
+      <li class="list-group-item">
+
+        <div class="row">
+
+          <div class="col-2">
+            {{ record.pub_date }}
+          </div>
+          <div class="col-2">
+            {{ record.duty_time}}
+          </div>
+          <div class="col-2">
+            Вахта № {{ record.watch }}
+          </div>
+          <div class="col-5">
+            {{ record.author.profile.depart}} {{ record.author.profile.position}} {{ record.author.get_full_name}}
+          </div>
+          <div class="col-1">
+            <a href="{% url 'logs:record_detail' record.id %}">
+              <img src="{% static 'img/pencil-square.svg' %}" width="30" height="30" class="rounded float-end" alt="">
+            </a>
+          </div>
+          {% comment %} <div class="w-100"></div> {% endcomment %}
+        </div>
+
+      </li>
+        {% endfor %}
+    </ul>
+        {% include 'includes/paginator.html' %}
+  </div>
 </div>
 {% endblock %}

@@ -1,5 +1,5 @@
 <header>
-  <nav class="navbar navbar-light" style="background-color: lightskyblue">
+  {% comment %} <nav class="navbar navbar-light" style="background-color: lightskyblue">
     <div class="container">
       <a class="navbar-brand" href="{% url 'logs:index' %}">
         {% load static %}
@@ -7,5 +7,40 @@
         <span>Оперативный журнал</span>
       </a>
     </div>
-  </nav>
+  </nav> {% endcomment %}
+  <div class="container">
+
+    {% with request.resolver_match.view_name as view_name %}
+
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link {% if view_name  == 'logs:index' %}active{% endif %}" href="{% url 'logs:index' %}">
+          Оперативный журнал
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if view_name  == 'logs:record_create' %}active{% endif %}" href="{% url 'logs:record_create' %}">
+          Добавить смену
+        </a>
+      </li>       
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          Журнал заданий
+        </a>
+      </li>      
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          Журнал обходов
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/admin/">
+          Админка
+        </a>
+      </li>
+    
+    </ul>
+
+    {% endwith %}
+  </div>
 </header>
