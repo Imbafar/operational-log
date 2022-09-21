@@ -61,7 +61,7 @@
               </div>
             </div>
             {% endfor %}
-            <div class="col-md-9 offset-md-6">
+            <div>
               <button type="submit" class="btn btn-primary">
                 {% if is_edit %}
                 Сохранить
@@ -70,9 +70,11 @@
                 {% endif %}
               </button>
               {% if is_edit %}
-              <a class="btn btn-danger" href="#" role="button">
-                Удалить
-              </a>
+               {% if request.user == text.record.author %}
+                <a class="btn btn-danger" href="{% url 'logs:text_delete' text.id %}" role="button">
+                  Удалить
+                </a>
+                {% endif %}
               {% endif %}
             </div>
           </form>

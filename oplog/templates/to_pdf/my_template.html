@@ -1,0 +1,72 @@
+<!DOCTYPE html> 
+<html lang="ru"> 
+    
+    <head> 
+        <meta charset="UTF-8"> 
+        <title>Hi</title> 
+        <style type="text/css"> 
+            @page { size: A4; margin: 1cm; } 
+            @font-face { 
+                font-family: Arial; 
+                src: url({{font}}/arial.ttf); 
+            } 
+            body{ 
+                font-family: Arial; 
+            } 
+            table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+            }
+            
+            td, th {
+                border: 1px solid #000000;
+                text-align: left;
+                padding: 3px;
+            }
+            tl {
+                border: 1px solid #000000;
+                text-align: left;
+                padding: 3px;
+            }
+            
+            tr:nth-child(even) {
+                background-color: #dddddd;
+            }
+        </style> 
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    </head> 
+    <body> 
+    <table class="table table-bordered border-primary">
+        <thead>
+            <tr>
+              <th scope="col">Время</th>
+              <th style="width:70%">События смены</th>
+              <th scope="col">Визы</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">{{ record.pub_date|date:"d E Y" }}</th>
+                <td>Вахта №: {{ record.watch }}
+                    Смена: {{ record.duty_time }}
+                    Приемка смены: {{ record.on_work }}
+                </td>
+                <td> </td>
+                {% comment %} <td> </td> {% endcomment %}
+            </tr>
+            {% if texts %}
+                {% for text in texts%}
+                <tr>
+                    <th scope="row">{{ text.pub_time }}</th>
+                    <td>{{ text.text|linebreaksbr }}</td>
+                    <td  border="none"> </td>
+
+                </tr>
+                {% endfor %}
+            {% endif%}
+        </tbody>
+    </table>
+</body> 
+</html> 

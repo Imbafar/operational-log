@@ -1,9 +1,14 @@
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import RecordForm, TextForm
-from .models import Record, Text
+from .models import Record, Text, User
+from .to_pdf import get_pdf
+
+# from .to_pdf_from_html import download_shpping_cart
 
 
 def index(request):
@@ -15,6 +20,7 @@ def index(request):
         "page_obj": page_obj,
     }
     return render(request, "records/index.html", context)
+
 
 def record_detail(request, record_id):
     record = get_object_or_404(Record, id=record_id)
@@ -28,47 +34,103 @@ def record_detail(request, record_id):
     return render(request, "records/record_detail.html", context)
 
 
+@login_required
 def record_create(request):
-    form = RecordForm(request.POST or None)
-    if form.is_valid():
-        record = form.save(commit=False)
-        record.author = request.user
-        record.save()
-        return redirect("logs:index")
-    return render(request, "records/record_create.html", {"form": form})
+    if request.method == "GET":
+        record = Record.objects.first()
+        form = RecordForm(initial={"on_work": record.on_work})
+        form.base_fields["workers"].queryset = User.objects.filter(
+            position__depart=request.user.position.depart
+        ).exclude(position=request.user.position)
+    else:
+        form = RecordForm(request.POST or None)
+        if form.is_valid():
+            record = form.save(commit=False)
+            record.author = request.user
+            record.save()
+            return redirect("logs:record_detail", record.id)
+
+    context = {
+        "form": form,
+    }
+    return render(request, "records/record_create.html", context)
 
 
+@login_required
 def text_create(request, record_id):
     record = get_object_or_404(Record, id=record_id)
+    if request.user != record.author:
+        return redirect("logs:record_detail", record_id)
     form = TextForm(request.POST or None)
     if form.is_valid():
         text = form.save(commit=False)
         text.record = record
         text.save()
-        return redirect('logs:record_detail', record_id)
-        
+        return redirect("logs:record_detail", record_id)
+
     context = {
-        'form': form,
+        "form": form,
     }
-    return render(request, 'records/text_create.html', context)
+    return render(request, "records/text_create.html", context)
 
 
+@login_required
 def text_edit(request, text_id):
     text = get_object_or_404(Text, id=text_id)
     # if request.user != post.author:
     #     return redirect('posts:post_detail', post_id)
 
-    form = TextForm(
-        request.POST or None,
-        instance=text
-    )
+    form = TextForm(request.POST or None, instance=text)
     if form.is_valid():
         form.save()
-        return redirect('logs:record_detail', text.record.id)
-    context = {'form': form, 'text': text, 'is_edit': True}
-    return render(request, 'records/text_create.html', context)
-    
+        return redirect("logs:record_detail", text.record.id)
+    if request.user != text.record.author:
+        is_edit = True
+        print("HUI")
+    else:
+        is_edit = False
+        print("pizda")
+    context = {"form": form, "text": text, "is_edit": is_edit}
+    return render(request, "records/text_create.html", context)
 
+
+@login_required
+def record_edit(request, record_id):
+    record = get_object_or_404(Record, id=record_id)
+    # if request.user != post.author:
+    #     return redirect('posts:post_detail', post_id)
+
+    form = RecordForm(request.POST or None, instance=record)
+    if form.is_valid():
+        form.save()
+        return redirect("logs:record_detail", record_id)
+    context = {"form": form, "record": record, "is_edit": True}
+    return render(request, "records/record_create.html", context)
+
+
+@login_required
+def record_delete(request, record_id):
+    record = get_object_or_404(Record, id=record_id)
+    if request.user != record.author:
+        raise PermissionDenied
+    obj = Record.objects.filter(id=record_id)
+    obj.delete()
+    return redirect("logs:index")
+
+
+@login_required
+def text_delete(request, text_id):
+    text = get_object_or_404(Text, id=text_id)
+    if request.user != text.record.author:
+        raise PermissionDenied
+    obj = Text.objects.filter(id=text_id)
+    obj.delete()
+    return redirect("logs:index")
+    # return redirect('logs:record_detail', text.record.id)
+
+
+def todo(request):
+    return render(request, "records/todo.html")
 
 
 # def post_create(request):
@@ -95,8 +157,6 @@ def text_edit(request, text_id):
 #         return redirect('posts:post_detail', post_id)
 #     context = {'form': form, 'post': post, 'is_edit': True}
 #     return render(request, 'posts/create_post.html', context)
-
-
 
 
 # def index(request):

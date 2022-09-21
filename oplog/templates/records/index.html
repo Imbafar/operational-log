@@ -7,25 +7,42 @@
 
 {% block content %}
 <div class="container py-5">
+  {% if user.is_authenticated %}
+    <div>
+      На смене:
+      {{ user.depart }}
+      {{ user.position }}
+      {{ user.get_full_name }}
+    </div>
+  {% endif %}
   <div class="card my-4">
     <div class="card-header text-center">
-      Оперативный журнал
+      Оперативный журнал {{ user.position}}
     </div>
     <ul class="list-group list-group-flush">
       <li class="list-group-item">
 
         <div class="row">
           <div class="col-2">
+            <b>
             Дата
+            </b>
           </div>
           <div class="col-2">
-            Смена
+            <b>
+              Смена
+            </b>
           </div>
           <div class="col-2">
-            Вахта
+            <b>
+              Вахта
+           </b>
+
           </div>
           <div class="col-5">
-            Пользователь
+            <b>
+              Пользователь
+            </b>
           </div>
           <div class="col-1"> </div>
           {% comment %} <div class="w-100"></div> {% endcomment %}
@@ -46,12 +63,20 @@
             Вахта № {{ record.watch }}
           </div>
           <div class="col-5">
-            {{ record.author.profile.depart}} {{ record.author.profile.position}} {{ record.author.get_full_name}}
+            {{ record.author.position.position}}
+            {{ record.author.position.depart}}
+            {{ record.author.get_full_name}}
           </div>
           <div class="col-1">
+            {% if forloop.first %}
             <a href="{% url 'logs:record_detail' record.id %}">
               <img src="{% static 'img/pencil-square.svg' %}" width="30" height="30" class="rounded float-end" alt="">
             </a>
+            {% else %}
+            <a href="{% url 'logs:record_detail' record.id %}">
+              <img src="{% static 'img/eyeglasses.svg' %}" width="30" height="30" class="rounded float-end" alt="">
+            </a>
+            {% endif %}
           </div>
           {% comment %} <div class="w-100"></div> {% endcomment %}
         </div>
@@ -59,7 +84,12 @@
       </li>
         {% endfor %}
     </ul>
-        {% include 'includes/paginator.html' %}
+  </div>
+  
+  {% include 'includes/paginator.html' %}
+  <div class="position-relative py-5">
+    <div class="position-absolute top-100 start-50 translate-middle">
+  </div>
   </div>
 </div>
 {% endblock %}

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-_&$zpx^sylzx_06#f2-5ifo1sy-zw!+%ruu=rk+66%ac*y=p-=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'log',
     'core',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+# ]
 
 ROOT_URLCONF = 'oplog.urls'
 
@@ -132,4 +138,10 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-POSTS_FOR_PAGE = 30
+POSTS_FOR_PAGE = 10
+
+AUTH_USER_MODEL = 'log.User' 
+
+LOGIN_URL = '/auth/login/'
+
+FONT_DIR = BASE_DIR / 'static/font'

@@ -10,7 +10,12 @@
 
   <div class="card my-4">
     <div class="card-header text-center">
-      Приемка смены
+      <div class="col-12">
+        Приемка смены
+        <a href="{% url 'logs:record_edit' record.id %}">
+          <img src="{% static 'img/pencil-square.svg' %}" width="30" height="30" class="rounded float-end" alt="">
+        </a>
+      </div>
     </div>
     <!-- <div class="card-body"> -->
 
@@ -25,8 +30,16 @@
         Смена: {{ record.duty_time }}
       </li>
       <li class="list-group-item">
-        Автор: {{ record.author.get_full_name }}
+         {{ record.author.position.position}}
+         {{ record.author.position.depart}}
+         {{ record.author.get_full_name}}
       </li>
+      <li class="list-group-item">
+         На смене: 
+          {% for worker in record.workers.all %}
+            {{ worker }}
+          {% endfor%}
+      </li>      
       <li class="list-group-item">
         Приемка смены: {{ record.on_work }}
       </li>
@@ -62,12 +75,16 @@
   {% endif%}
   {% load user_filters %}
   {% if user.is_authenticated %}
+  {% if request.user == record.author %}
   
         <a class="btn btn-primary" href="{% url 'logs:text_create' record.id %}">
           Создать запись
         </a>
   {% endif %}
-  
+  {% endif %}
+  <a class="btn btn-primary" href="{% url 'logs:download' record.id %}">
+    Скачать
+  </a>
   
   
   {% comment %} {% if request.user == record.author %}

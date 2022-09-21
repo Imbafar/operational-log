@@ -22,22 +22,30 @@
         <a class="nav-link {% if view_name  == 'logs:record_create' %}active{% endif %}" href="{% url 'logs:record_create' %}">
           Добавить смену
         </a>
-      </li>       
+      </li>     
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link {% if view_name  == 'logs:todo' %}active{% endif %}" href="{% url 'logs:todo' %}">
           Журнал заданий
         </a>
-      </li>      
+      </li>        
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link {% if view_name  == 'logs:todo1' %}active{% endif %}" href="{% url 'logs:todo1' %}">
           Журнал обходов
         </a>
       </li>
+      {% if user.is_authenticated %}
       <li class="nav-item">
-        <a class="nav-link" href="/admin/">
-          Админка
+        <a class="nav-link {% if view_name  == 'users:login' %}active{% endif %}" href="{% url 'users:logout' %}">
+          Выйти
         </a>
       </li>
+      {% else %}
+      <li class="nav-item">
+        <a class="nav-link {% if view_name  == 'users:login' %}active{% endif %}" href="{% url 'users:login' %}">
+          Войти
+        </a>
+      </li>
+      {% endif %}
     
     </ul>
 
