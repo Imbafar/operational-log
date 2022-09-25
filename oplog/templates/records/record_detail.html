@@ -12,12 +12,13 @@
     <div class="card-header text-center">
       <div class="col-12">
         Приемка смены
+        {% if request.user == record.author %}
         <a href="{% url 'logs:record_edit' record.id %}">
           <img src="{% static 'img/pencil-square.svg' %}" width="30" height="30" class="rounded float-end" alt="">
         </a>
+        {% endif %}
       </div>
     </div>
-    <!-- <div class="card-body"> -->
 
     <ul class="list-group list-group-flush">
       <li class="list-group-item">
@@ -62,9 +63,11 @@
           </div>
           <div class="col-11">
             {{ text.text|linebreaksbr }}
-            <a href="{% url 'logs:text_edit' text.id %}">
-              <img src="{% static 'img/pencil-square.svg' %}" width="30" height="30" class="rounded float-end" alt="">
-            </a>
+            {% if request.user == record.author %}
+              <a href="{% url 'logs:text_edit' text.id %}">
+                <img src="{% static 'img/pencil-square.svg' %}" width="30" height="30" class="rounded float-end" alt="">
+              </a>
+            {% endif %}
           </div>
         </div>
       </li>
@@ -76,14 +79,13 @@
   {% load user_filters %}
   {% if user.is_authenticated %}
   {% if request.user == record.author %}
-  
         <a class="btn btn-primary" href="{% url 'logs:text_create' record.id %}">
           Создать запись
         </a>
   {% endif %}
   {% endif %}
   <a class="btn btn-primary" href="{% url 'logs:download' record.id %}">
-    Скачать
+    Распечатать pdf
   </a>
   
   

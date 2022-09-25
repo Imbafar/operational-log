@@ -1,5 +1,5 @@
 from django.urls import path
-
+from django.conf.urls import url
 from . import views
 from .to_pdf_from_html import download
 
@@ -18,4 +18,7 @@ urlpatterns = [
     path("todo", views.todo, name="todo"),
     path("tododo", views.todo, name="todo1"),
     path("records/<int:record_id>/download/", download, name="download"),
+    url(r'^textsearch/$', views.search, name="search_text"),
+    url(r'^textsearchresult/$', views.search_result, name="search_text_result"),
+    
 ]

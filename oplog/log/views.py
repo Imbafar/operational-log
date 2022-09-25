@@ -10,7 +10,7 @@ from .to_pdf import get_pdf
 
 # from .to_pdf_from_html import download_shpping_cart
 
-
+@login_required
 def index(request):
     record_list = Record.objects.all()
     paginator = Paginator(record_list, settings.POSTS_FOR_PAGE)
@@ -21,7 +21,7 @@ def index(request):
     }
     return render(request, "records/index.html", context)
 
-
+@login_required
 def record_detail(request, record_id):
     record = get_object_or_404(Record, id=record_id)
     texts = record.texts.all()
@@ -77,28 +77,24 @@ def text_create(request, record_id):
 @login_required
 def text_edit(request, text_id):
     text = get_object_or_404(Text, id=text_id)
-    # if request.user != post.author:
-    #     return redirect('posts:post_detail', post_id)
+    if request.user != text.record.author:
+        return redirect("logs:record_detail", text.record.id)
+        
 
     form = TextForm(request.POST or None, instance=text)
     if form.is_valid():
         form.save()
         return redirect("logs:record_detail", text.record.id)
-    if request.user != text.record.author:
-        is_edit = True
-        print("HUI")
-    else:
-        is_edit = False
-        print("pizda")
-    context = {"form": form, "text": text, "is_edit": is_edit}
+
+    context = {"form": form, "text": text, "is_edit": True}
     return render(request, "records/text_create.html", context)
 
 
 @login_required
 def record_edit(request, record_id):
     record = get_object_or_404(Record, id=record_id)
-    # if request.user != post.author:
-    #     return redirect('posts:post_detail', post_id)
+    if request.user != record.author:
+        return redirect("logs:record_detail", record_id)
 
     form = RecordForm(request.POST or None, instance=record)
     if form.is_valid():
@@ -128,10 +124,23 @@ def text_delete(request, text_id):
     return redirect("logs:index")
     # return redirect('logs:record_detail', text.record.id)
 
-
+@login_required
 def todo(request):
     return render(request, "records/todo.html")
 
+@login_required
+def search(request):
+    return render(request, "records/search.html")
+
+@login_required
+def search_result(request):
+    val = request.GET.get("q")
+    if val:
+        page_obj = Text.objects.filter(text__icontains=val)
+    else:
+        page_obj = Text.objects.none()
+    context = {"page_obj": page_obj}
+    return render(request, "records/search_result.html", context)
 
 # def post_create(request):
 #     form = PostForm(request.POST or None, files=request.FILES or None)

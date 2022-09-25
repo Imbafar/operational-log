@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Результаты поиска
+{% endblock %}
+{% block content %}
+<div class="container py-5">
+
+    {% for text in page_obj %}
+    <li class="list-group-item">
+        Дата: {{ text.record.pub_date|date:"d E Y" }} 
+        Вахта №: {{ text.record.watch }}
+        Смена: {{ text.record.duty_time }}
+
+        {{ text.record.author.position.position}}
+        {{ text.record.author.position.depart}}
+        {{ text.record.author.get_full_name}}
+        <br>
+        <br>
+        <div class="row">
+
+          <div class="col-12 col-md-1">
+            {{ text.pub_time }}
+          </div>
+          <div class="col-11">
+            {{ text.text|linebreaksbr }}
+            <a href="{% url 'logs:record_detail' text.record.id %}">
+              <img src="{% static 'img/pencil-square.svg' %}" width="30" height="30" class="rounded float-end" alt="">
+            </a>
+          </div>
+        </div>
+      </li>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

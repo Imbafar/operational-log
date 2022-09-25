@@ -33,12 +33,24 @@
           Журнал обходов
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link {% if view_name  == 'logs:search_text' %}active{% endif %}" href="{% url 'logs:search_text' %}">
+          Поиск
+        </a>
+      </li>
       {% if user.is_authenticated %}
+        {% if user.is_staff %}
+        </li>
+        <li class="nav-item">
+          <a class="nav-link"  href="/admin/">
+            Админка
+          </a>
+        </li>
+        {% endif %}
       <li class="nav-item">
         <a class="nav-link {% if view_name  == 'users:login' %}active{% endif %}" href="{% url 'users:logout' %}">
           Выйти
         </a>
-      </li>
       {% else %}
       <li class="nav-item">
         <a class="nav-link {% if view_name  == 'users:login' %}active{% endif %}" href="{% url 'users:login' %}">
